@@ -82,7 +82,7 @@ ArbolesMontecarlo <- function(semillas, param_basicos) {
   # la funcion mcmapply  llama a la funcion ArbolEstimarGanancia
   #  tantas veces como valores tenga el vector  ksemillas
   ganancias <- mcmapply(ArbolEstimarGanancia,
-    PARAM$semillas, # paso el vector de semillas
+    semillas, # paso el vector de semillas
     MoreArgs = list(param_basicos), # aqui paso el segundo parametro
     SIMPLIFY = FALSE#,
     #mc.cores = 1

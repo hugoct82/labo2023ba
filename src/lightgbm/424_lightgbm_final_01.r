@@ -30,6 +30,8 @@ PARAM$finalmodel$num_leaves <- 44
 
 
 PARAM$finalmodel$max_bin <- 31
+#Este hiperparámetro controla el número máximo de bins (contenedores)
+# que se utilizan para agrupar valores en los datos.
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------

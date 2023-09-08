@@ -36,7 +36,7 @@ PARAM$train$testing <- c(202107)
 
 # Atencion  0.1  de  undersampling de la clase mayoritaria,  los CONTINUA
 # 1.0 significa NO undersampling ,  0.1  es quedarse con el 10% de los CONTINUA
-PARAM$train$undersampling <- 0.1 # esto s epuede probar para deducir el tiempo de entrenamiento
+PARAM$train$undersampling <- 0.3 # esto s epuede probar para deducir el tiempo de entrenamiento
 
 PARAM$train$semilla <- 420551 # cambiar por su propia semilla  !!!
 

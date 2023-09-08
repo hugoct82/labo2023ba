@@ -1,6 +1,8 @@
 # Experimentos Colaborativos Default
 # Workflow  Training Strategy
 
+#Corre con 8vCPU y 32 GB como min
+
 # limpio la memoria
 rm(list = ls(all.names = TRUE)) # remove all objects
 gc(full = TRUE) # garbage collection

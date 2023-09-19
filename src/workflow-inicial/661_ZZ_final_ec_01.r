@@ -39,8 +39,10 @@ PARAM$experimento <- "ZZ6610_EC_01"
 PARAM$exp_input <- "HT6510_EC_01"
 
 # Atencion, que cada modelos se procesa con 5 semillas, ajuste a SUS necesidades
-# Que modelos quiero, segun su posicion en el ranking e la Bayesian Optimizacion, ordenado por ganancia descendente
-PARAM$modelos_rank <- c(1)
+
+# Que modelos quiero, segun su posicion en el ranking e la Bayesian Optimizacion,
+# ordenado por ganancia descendente
+PARAM$modelos_rank <- c(1) #Se le ingresa como 1 logico?
 
 #Cuando se hagan pruebas finales se podrá usar mas o menos semillas.
 # reemplazar por las propias semillas
@@ -123,7 +125,7 @@ campos_buenos <- setdiff(colnames(dataset), c("clase_ternaria", "clase01"))
 vganancias_suavizadas <- c()
 
 imodelo <- 0L
-for (modelo_rank in PARAM$modelos_rank) {
+for (modelo_rank in PARAM$modelos_rank) { #CONSULTAR
   imodelo <- imodelo + 1L
   cat("\nmodelo_rank: ", modelo_rank, ", semillas: ")
   OUTPUT$status$modelo_rank <- modelo_rank

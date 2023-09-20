@@ -1,6 +1,8 @@
 # Experimentos Colaborativos Default
 # Hyperparameter Tuning  lightgbm
 
+#Corre con 8vCPU y 32 GB de RAM
+
 # pensado para datasets con UNDERSAPLING de la clase mayoritaria
 
 # limpio la memoria

@@ -130,6 +130,8 @@ AgregarVariables_IntraMes <- function(dataset) {
 
   # Aqui debe usted agregar sus propias nuevas variables
 
+
+
   # valvula de seguridad para evitar valores infinitos
   # paso los infinitos a NULOS
   infinitos <- lapply(
@@ -260,6 +262,11 @@ setwd(PARAM$home)
 # esta en la carpeta del exp_input y siempre se llama  dataset.csv.gz
 dataset_input <- paste0("./exp/", PARAM$exp_input, "/dataset.csv.gz")
 dataset <- fread(dataset_input)
+
+
+
+
+
 
 # creo la carpeta donde va el experimento
 dir.create(paste0("./exp/", PARAM$experimento, "/"), showWarnings = FALSE)

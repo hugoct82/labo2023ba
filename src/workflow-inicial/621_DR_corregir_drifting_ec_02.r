@@ -272,10 +272,53 @@ require(skimr)
 resumen_datos <- skim(dataset)
 write.csv(resumen_datos, file = paste0("./exp/", PARAM$exp_input,"resumen_datos.csv"), row.names = FALSE)
 
-sort(unique(dataset$ccajeros_propios_descuentos))
+sort(unique(dataset$cprestamos_hipotecarios))
 
-conteo_plazos_fijos <- dataset[, .(cantidad_plazos_fijos = sum(cplazo_fijo)), by = numero_de_cliente]
+ctransferencias_recibidas <- dataset[, .(ctransferencias_recibidas = sum(ctransferencias_recibidas)), by = numero_de_cliente]
+dataset <- dataset[order(ctransferencias_recibidas), ]
+
+
+ctarjeta_debito_por_mes <- dataset[, .(ctarjeta_debito = sum(ctarjeta_debito)), by = .(numero_de_cliente, foto_mes)]
+ctarjeta_debito_por_mes <- ctarjeta_debito_por_mes[order(-ctarjeta_debito)]
+
+
+
+
 #EVALUAR SI EL TIPO DE VAR con P0 a P75 en 0 son todos del tipo factor, tienen recorrido de 1 en 1
+
+
+generar_columnas_binarias <- function(data, columnas) {
+  for (columna in columnas) {
+    valores_unicos <- unique(data[[columna]])
+    
+    for (valor in valores_unicos) {
+      nombre_columna <- paste0(columna, "_", valor)
+      
+      data[, (nombre_columna) := as.integer(data[[columna]] == 1)]
+    }
+  }
+  
+  # No es necesario devolver la lista de columnas binarias
+}
+
+# Lista de columnas a binarizar
+columnas_a_binzar <- c("ctarjeta_visa_debitos_automaticos", "cpayroll2_trx", "ccajeros_propios_descuentos")
+
+# Aplicar la función a tu dataset
+generar_columnas_binarias(data = dataset, columnas = columnas_a_binzar)
+
+# Verificar el dataset actualizado con las columnas binarias
+
+
+names(columnas_binarias)
+
+# Mostrar el resultado
+names(dataset)
+
+
+
+
+
 
 
 #FIN DE REVISION DE DATOS

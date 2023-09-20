@@ -153,9 +153,20 @@ AgregarVariables_IntraMes <- function(dataset) {
   }
   }
   #AQUI HAY QUE COLOCAR LAS VARIABLES A BINARIZAR...ACA O DONDE EMPIENZA EL SCRIPT PRINCIPAL
-  columnas_a_binzar <- c("ctarjeta_visa_debitos_automaticos",
-                         "cpayroll2_trx",
-                         "ccajeros_propios_descuentos")
+  columnas_a_binzar <- c("internet","cproductos","tcuentas","ccuenta_corriente","ccaja_ahorro","ctarjeta_debito",
+    "ctarjeta_debito_transacciones","ctarjeta_visa","ctarjeta_visa_transacciones",
+    "ctarjeta_master","ctarjeta_master_transacciones","cprestamos_personales",
+    "cprestamos_prendarios","cprestamos_hipotecarios","cplazo_fijo,cinversion1",
+    "cinversion2","cseguro_vida","cseguro_auto","cseguro_vivienda","cseguro_accidentes_personales",
+    "ccaja_seguridad","cpayroll_trx","cpayroll2_trx","ccuenta_debitos_automaticos","ctarjeta_visa_debitos_automaticos",
+    "ctarjeta_master_debitos_automaticos","cpagodeservicios","cpagomiscuentas","ccajeros_propios_descuentos",
+    "ctarjeta_visa_descuentos","ctarjeta_master_descuentos","ccomisiones_mantenimiento",
+    "ccomisiones_otras","cforex","cforex_buy","ctransferencias_recibidas","ctransferencias_emitidas",
+    "cextraccion_autoservicio","ccheques_depositados","ccheques_emitidos","ccheques_depositados_rechazados",
+    "ccheques_emitidos_rechazados","ccallcenter_transacciones","chomebanking_transacciones",
+    "ccajas_consultas","ccajas_depositos","ccajas_extracciones","ccajas_otras","catm_trx,catm_trx_other",
+    "ctrx_quarter,cmobile_app_trx","Master_status","Master_cconsumos","Master_cadelantosefectivo",
+    "Visa_status","Visa_cconsumos","Visa_cadelantosefectivo")
 
   # Aplica la función a tu data.table
   generar_columnas_binarias(data = dataset, columnas = columnas_a_binzar)

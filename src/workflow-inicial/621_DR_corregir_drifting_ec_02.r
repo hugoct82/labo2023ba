@@ -130,6 +130,7 @@ AgregarVariables_IntraMes <- function(dataset) {
 
   # Aqui debe usted agregar sus propias nuevas variables
   ##VARAIBLES MANUALES
+    ##VARAIBLES MANUALES
   generar_columnas_binarias <- function(data, columnas) {
   # Inicializa una lista para almacenar las columnas binarias
   columnas_binarias <- list()
@@ -150,12 +151,16 @@ AgregarVariables_IntraMes <- function(dataset) {
       #columnas_binarias[[nombre_columna]] <- data[[nombre_columna]]
     }
   }
-
-  columnas_a_binzar <- c("ctarjeta_visa_debitos_automaticos", "cpayroll2_trx", "ccajeros_propios_descuentos")
+  }
+  #AQUI HAY QUE COLOCAR LAS VARIABLES A BINARIZAR...ACA O DONDE EMPIENZA EL SCRIPT PRINCIPAL
+  columnas_a_binzar <- c("ctarjeta_visa_debitos_automaticos",
+                         "cpayroll2_trx",
+                         "ccajeros_propios_descuentos")
 
   # Aplica la función a tu data.table
   generar_columnas_binarias(data = dataset, columnas = columnas_a_binzar)
-  }
+  
+  
   
 
 

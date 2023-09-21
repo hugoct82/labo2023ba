@@ -132,25 +132,33 @@ AgregarVariables_IntraMes <- function(dataset) {
    ##VARAIBLES MANUALES
 
   generar_columnas_binarias <- function(data, columnas) {
-  # Inicializa una lista para almacenar las columnas binarias
-  columnas_binarias <- list()
-  
-  for (columna in columnas) {
-    # Obtén los valores únicos de la columna actual
-    valores_unicos <- unique(data[[columna]])
+    # Inicializa una lista para almacenar las columnas binarias
+    columnas_binarias <- list()
     
-    # Recorre cada valor único y crea una columna binaria
-    for (valor in valores_unicos) {
-      # Nombre de la nueva columna
-      nombre_columna <- paste0(columna, "_", valor)
+    for (columna in columnas) {
+      # Obtén los valores únicos de la columna actual
+      valores_unicos <- unique(data[[columna]])
       
-      # Crea la columna binaria con 1 si coincide, 0 si no
-      data[, (nombre_columna) := as.integer(data[[columna]] == valor)]
-      
-      # Agrega la columna binaria a la lista
-      #columnas_binarias[[nombre_columna]] <- data[[nombre_columna]]
+      # Recorre cada valor único y crea una columna binaria
+      for (valor in valores_unicos) {
+        # Nombre de la nueva columna
+        nombre_columna <- paste0(columna, "_", valor)
+        
+        # Crea la columna binaria con 1 si coincide, 0 si no
+        data[, (nombre_columna) := as.integer(data[[columna]] == valor)]
+        
+        # Agrega la columna binaria a la lista
+        #columnas_binarias[[nombre_columna]] <- data[[nombre_columna]]
+      }
     }
-  }
+    
+    # Obtener las columnas que son de tipo lógico (booleano)
+    columnas_logicas <- names(sapply(data, is.logical))[sapply(data, is.logical)]
+    
+    # Eliminar las columnas lógicas del conjunto de datos
+    data[, (columnas_logicas) := NULL]
+    
+  
   }
   #AQUI HAY QUE COLOCAR LAS VARIABLES A BINARIZAR...ACA O DONDE EMPIENZA EL SCRIPT PRINCIPAL
   columnas_a_binzar <- c("internet","cproductos","tcuentas","ccuenta_corriente","ccaja_ahorro","ctarjeta_debito",
@@ -371,3 +379,19 @@ cat(format(Sys.time(), "%Y%m%d %H%M%S"), "\n",
   file = "zRend.txt",
   append = TRUE
 )
+
+
+
+#AUXILIAR
+
+tipos_de_datos_distintos <- unique(sapply(dataset, class))
+
+# Mostrar los tipos de datos distintos
+print(tipos_de_datos_distintos)
+
+variables_numeric <- names(sapply(dataset, function(x) class(x) == "character"))
+
+# Mostrar las variables de tipo "character"
+names(variables_numeric)
+
+unique(dataset$ctarjeta_visa_transacciones_300)

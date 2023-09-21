@@ -133,7 +133,7 @@ AgregarVariables_IntraMes <- function(dataset) {
 
   generar_columnas_binarias <- function(data, columnas) {
     # Inicializa una lista para almacenar las columnas binarias
-    columnas_binarias <- list()
+    
     
     for (columna in columnas) {
       # Obtén los valores únicos de la columna actual
@@ -153,10 +153,10 @@ AgregarVariables_IntraMes <- function(dataset) {
     }
     
     # Obtener las columnas que son de tipo lógico (booleano)
-    columnas_logicas <- names(sapply(data, is.logical))[sapply(data, is.logical)]
+    #columnas_logicas <- names(sapply(data, is.logical))[sapply(data, is.logical)]
     
     # Eliminar las columnas lógicas del conjunto de datos
-    data[, (columnas_logicas) := NULL]
+    #data[, (columnas_logicas) := NULL]
     
   
   }
@@ -384,14 +384,18 @@ cat(format(Sys.time(), "%Y%m%d %H%M%S"), "\n",
 
 #AUXILIAR
 
-tipos_de_datos_distintos <- unique(sapply(dataset, class))
 
-# Mostrar los tipos de datos distintos
-print(tipos_de_datos_distintos)
-
-variables_numeric <- names(sapply(dataset, function(x) class(x) == "character"))
-
-# Mostrar las variables de tipo "character"
-names(variables_numeric)
-
-unique(dataset$ctarjeta_visa_transacciones_300)
+# clases_unicas <- sapply(dataset, function(x) class(unique(x)))
+# variables_numeric <- names(clases_unicas[clases_unicas == "numeric"])
+# variables_integer <- names(clases_unicas[clases_unicas == "integer"])
+# variables_character <- names(clases_unicas[clases_unicas == "character"])
+# 
+# # Mostrar las variables asociadas a cada clase
+# print("Variables asociadas a la clase 'numeric':")
+# print(variables_numeric)
+# 
+# print("Variables asociadas a la clase 'integer':")
+# print(variables_integer)
+# 
+# print("Variables asociadas a la clase 'character':")
+# print(variables_character)

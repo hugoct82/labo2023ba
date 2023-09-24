@@ -130,6 +130,7 @@ AgregarVariables_IntraMes <- function(dataset) {
 
   # Aqui debe usted agregar sus propias nuevas variables
   
+  
 
 dataset[, mtotal_income := rowSums(.SD, na.rm = TRUE), .SDcols = c("mpayroll", "mpayroll2")] #1
 
@@ -225,14 +226,14 @@ dataset <- merge(dataset, datos_canasta, by = "foto_mes", all.x = TRUE)
 sum_mrentabilidad <- dataset[, .(suma_mrentabilidad = sum(mrentabilidad, na.rm = TRUE)), by = foto_mes]
 dataset <- merge(dataset, sum_mrentabilidad, by = "foto_mes", all.x = TRUE)
 dataset[, custumer_contribution := mrentabilidad / suma_mrentabilidad * 1e5] #37
-dataset[, suma_mrentabilidad := NULL]
+
 
 dataset[, investment_over_debt := mtotal_investment / mtotal_debt] #38
 
 total_income_mes <- dataset[, .(total_income_m = sum(mtotal_income, na.rm = TRUE)), by = foto_mes]
 dataset <- merge(dataset, total_income_mes, by = "foto_mes", all.x = TRUE)
 dataset[, Income_rate := mtotal_income / total_income_m *1e6] #39
-dataset[, total_income_m := NULL]
+
 
 #FUNCIÓN DE PERCENTILES FIJOS
 calculate_percentiles <- function(x) {
@@ -243,17 +244,17 @@ calculate_percentiles <- function(x) {
 }
 
 dataset[, Income_rate_ := calculate_percentiles(Income_rate), by = foto_mes]
-dummy_matrix <- model.matrix(~ Income_rate_ - 1, data = dataset)
-dataset <- cbind(dataset, dummy_matrix) #40 a 43
-dataset$Income_rate_   <- NULL
+#dummy_matrix <- model.matrix(~ Income_rate_ - 1, data = dataset)
+#dataset <- cbind(dataset, dummy_matrix) #40 a 43
+
 
 
 dataset[, environmental_rate := mtotal_income / Hogar_tipo_1b ]  
-dataset$Hogar_tipo_1b   <- NULL
+
 dataset[, environmental_rate_ := calculate_percentiles(environmental_rate), by = foto_mes]
-dummy_matrix <- model.matrix(~ environmental_rate_ - 1, data = dataset)
-dataset <- cbind(dataset, dummy_matrix) #44 a 48
-dataset$environmental_rate_   <- NULL
+#dummy_matrix <- model.matrix(~ environmental_rate_ - 1, data = dataset)
+#dataset <- cbind(dataset, dummy_matrix) #44 a 48
+
 
 
 dataset[, descubierto_usage := ifelse(!is.na(mcuentas_saldo), ifelse(mcuentas_saldo  < 0, 1, 0), NA)]
@@ -266,8 +267,11 @@ fechas_aguinal <- c(201807, 201812, 201907, 201912, 202007, 202012,
 dataset[, bonus_aguinaldo_detec := ifelse((foto_mes %in% fechas_aguinal), 0, 1)] #50
 
 
-
-
+dataset[, suma_mrentabilidad := NULL]
+dataset[, total_income_m := NULL]
+dataset[,Income_rate_:= NULL]
+dataset[,Hogar_tipo_1b:= NULL]
+dataset[,environmental_rate_:= NULL]
 
 
   # valvula de seguridad para evitar valores infinitos

@@ -129,7 +129,7 @@ AgregarVariables_IntraMes <- function(dataset) {
   dataset[, vmr_mpagominimo := vm_mpagominimo / vm_mlimitecompra]
 
   # Aqui debe usted agregar sus propias nuevas variables
-  ataset[, mtotal_income := rowSums(.SD, na.rm = TRUE), .SDcols = c("mpayroll", "mpayroll2")] #1
+  dataset[, mtotal_income := rowSums(.SD, na.rm = TRUE), .SDcols = c("mpayroll", "mpayroll2")] #1
 
     dataset[, mtotal_expense := rowSums(.SD, na.rm = TRUE), .SDcols = c("Master_mconsumototal","Visa_mconsumototal",
                                                                     "mcuenta_debitos_automaticos", "mpagodeservicios",

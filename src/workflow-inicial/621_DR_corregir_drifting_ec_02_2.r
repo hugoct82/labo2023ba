@@ -129,6 +129,8 @@ AgregarVariables_IntraMes <- function(dataset) {
   dataset[, vmr_mpagominimo := vm_mpagominimo / vm_mlimitecompra]
 
   # Aqui debe usted agregar sus propias nuevas variables
+  
+
   dataset[, mtotal_income := rowSums(.SD, na.rm = TRUE), .SDcols = c("mpayroll", "mpayroll2")] #1
 
   dataset[, mtotal_expense := rowSums(.SD, na.rm = TRUE), .SDcols = c("Master_mconsumototal","Visa_mconsumototal",
@@ -136,20 +138,20 @@ AgregarVariables_IntraMes <- function(dataset) {
                                                                     "mcomisiones_mantenimiento","ccomisiones_otras",
                                                                     "mcomisiones_otras")] #2
 
-  dataset[, msavings := ifelse(!is.na(total_income) | !is.na(total_expense), total_income - total_expense, NA)] #3
+  dataset[, msavings := ifelse(!is.na(mtotal_income) | !is.na(mtotal_expense), mtotal_income - mtotal_expense, NA)] #3
 
-  dataset[, saving_rate := savings / total_income] #4
+  dataset[, saving_rate := msavings / mtotal_income] #4
 
   dataset[, mvm_consumo_tc_total := rowSums(.SD, na.rm = TRUE), .SDcols = c("Master_mconsumospesos", "Master_mconsumosdolares",
                                                                           "Visa_mconsumospesos","Visa_mconsumosdolares")] #5
-  dataset[, vm_consumo_ingreso := vm_consumo_tc_total  / total_income]  #6
+  dataset[, vm_consumo_ingreso := mvm_consumo_tc_total  / mtotal_income]  #6
 
   dataset[, atm_ext_rate := ccajas_extracciones / ctrx_quarter] #7
 
   dataset[, mtotal_investment := rowSums(.SD, na.rm = TRUE), .SDcols = c("minversion1_pesos", "minversion1_dolares",
                                                                         "minversion2")] #8
 
-  dataset[, inv_o_income := total_investment / total_income] #9
+  dataset[, inv_o_income := mtotal_investment / mtotal_income] #9
 
   dataset[, income_type := ifelse(!is.na(cpayroll_trx), ifelse(cpayroll_trx > 1, 1, 0), NA)] #10
 
@@ -160,7 +162,7 @@ AgregarVariables_IntraMes <- function(dataset) {
   dataset[, mtotal_consumo := rowSums(.SD, na.rm = TRUE), .SDcols = c("Visa_mconsumototal",
                                                                     "Master_mconsumototal")] #12
 
-  dataset[, discount_usage_total := total_descuentos_tc/total_consumo] #13
+  dataset[, discount_usage_total := mtotal_descuentos_tc/mtotal_consumo] #13
   dataset[, mobile_transactions := cmobile_app_trx/ctrx_quarter] #14
   dataset[, extraction_rate_own := catm_trx/cextraccion_autoservicio] #15
   dataset[, extraction_rate_other := catm_trx_other/cextraccion_autoservicio] #16
@@ -169,7 +171,7 @@ AgregarVariables_IntraMes <- function(dataset) {
                                                                   "mprestamos_prendarios",
                                                                   "mprestamos_personales")] #17
 
-  dataset[, acid_rate := mcuentas_saldo/total_debt] #18
+  dataset[, acid_rate := mcuentas_saldo/mtotal_debt] #18
 
   dataset[, rentabilidad_prom_prod := mrentabilidad_annual / cproductos] #19
 
@@ -189,7 +191,7 @@ AgregarVariables_IntraMes <- function(dataset) {
   dataset[, mtotal_trans_tc_moneda := rowSums(.SD, na.rm = TRUE), .SDcols = c("mtarjeta_master_consumo",
                                                                             "mtarjeta_visa_consumo")] #27
 
-  dataset[, rate_trans_tc := total_trans_tc_moneda/total_trans_tc] #28
+  dataset[, rate_trans_tc := mtotal_trans_tc_moneda/mtotal_trans_tc] #28
   dataset[, in_trans_prom := mtransferencias_recibidas/ctransferencias_recibidas] #29
   dataset[, out_trans_prom := mtransferencias_emitidas/ctransferencias_emitidas] #30
   dataset[, cheques_dep_prom := mcheques_depositados/ccheques_depositados] #31
@@ -197,21 +199,21 @@ AgregarVariables_IntraMes <- function(dataset) {
   dataset[, cheq_rech_emit_rate := ccheques_emitidos_rechazados/ccheques_emitidos_rechazados] #33
   dataset[, cheq_rech_dep_rate := ccheques_depositados_rechazados/ccheques_depositados] #34
 
-  dataset[, mtotal_assets := rowSums(.SD, na.rm = TRUE), .SDcols = c("total_investment",
+  dataset[, mtotal_assets := rowSums(.SD, na.rm = TRUE), .SDcols = c("mtotal_investment",
                                                                     "mcuentas_saldo")]  #35
 
-  dataset[, liquidity_Rate := total_assets/total_debt] #36
+  dataset[, liquidity_Rate := mtotal_assets/mtotal_debt] #36
 
   sum_mrentabilidad <- dataset[, .(suma_mrentabilidad = sum(mrentabilidad, na.rm = TRUE)), by = foto_mes]
   dataset <- merge(dataset, sum_mrentabilidad, by = "foto_mes", all.x = TRUE)
   dataset[, custumer_contribution := mrentabilidad / suma_mrentabilidad * 1e5] #37
   dataset[, suma_mrentabilidad := NULL] 
 
-  dataset[, investment_over_debt := total_investment / total_debt] #38
+  dataset[, investment_over_debt := mtotal_investment / mtotal_debt] #38
 
-  total_income_mes <- dataset[, .(total_income_m = sum(total_income, na.rm = TRUE)), by = foto_mes]
+  total_income_mes <- dataset[, .(total_income_m = sum(mtotal_income, na.rm = TRUE)), by = foto_mes]
   dataset <- merge(dataset, total_income_mes, by = "foto_mes", all.x = TRUE)
-  dataset[, Income_rate := total_income / total_income_m *1e6] #39
+  dataset[, Income_rate := mtotal_income / total_income_m *1e6] #39
   dataset[, total_income_m := NULL]
 
   #FUNCIÓN DE PERCENTILES FIJOS
@@ -239,7 +241,7 @@ AgregarVariables_IntraMes <- function(dataset) {
   )
   datos_canasta <- data.table(foto_mes = foto_mes, Hogar_tipo_1b = Hogar_tipo_1b)
   dataset <- merge(dataset, datos_canasta, by = "foto_mes", all.x = TRUE)
-  dataset[, environmental_rate := total_income / Hogar_tipo_1b ]  
+  dataset[, environmental_rate := mtotal_income / Hogar_tipo_1b ]  
   dataset$Hogar_tipo_1b   <- NULL
   dataset[, environmental_rate_ := calculate_percentiles(environmental_rate), by = foto_mes]
   dummy_matrix <- model.matrix(~ environmental_rate_ - 1, data = dataset)
@@ -255,6 +257,7 @@ AgregarVariables_IntraMes <- function(dataset) {
   fechas_aguinal <- c(201807, 201812, 201907, 201912, 202007, 202012, 
                       202107, 202112, 202207, 202212, 202307)
   dataset[, bonus_aguinaldo_detec := ifelse((foto_mes %in% fechas_aguinal), 0, 1)] #50
+
 
 
 
@@ -459,22 +462,3 @@ cat(format(Sys.time(), "%Y%m%d %H%M%S"), "\n",
   append = TRUE
 )
 
-
-
-#AUXILIAR
-
-
-# clases_unicas <- sapply(dataset, function(x) class(unique(x)))
-# variables_numeric <- names(clases_unicas[clases_unicas == "numeric"])
-# variables_integer <- names(clases_unicas[clases_unicas == "integer"])
-# variables_character <- names(clases_unicas[clases_unicas == "character"])
-# 
-# # Mostrar las variables asociadas a cada clase
-# print("Variables asociadas a la clase 'numeric':")
-# print(variables_numeric)
-# 
-# print("Variables asociadas a la clase 'integer':")
-# print(variables_integer)
-# 
-# print("Variables asociadas a la clase 'character':")
-# print(variables_character)

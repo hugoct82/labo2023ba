@@ -251,9 +251,11 @@ Income_rate_p <- dcast(dataset[, list(V1=1, numero_de_cliente, foto_mes , Income
                        fun=sum,
                        value.var="V1",
                        drop=c(TRUE, FALSE))
+Income_rate_p <- as.data.table(Income_rate_p)                       
 
-dataset <- dataset[Income_rate_p, on=c("numero_de_cliente", "foto_mes")] #forma alternativa de merge
-
+merged_dataset <- merge(dataset, Income_rate_p, by = c("foto_mes", "numero_de_cliente"), all.x = TRUE)
+dataset<<-merged_dataset
+rm(merged_dataset)
 
 
 

@@ -11,7 +11,7 @@ require("yaml")
 
 # Parametros del script
 PARAM <- list()
-PARAM$experimento <- "DR6210_EC_03"
+PARAM$experimento <- "DR6210_EC_04"
 
 PARAM$exp_input <- "CA6110_EC_01"
 
@@ -216,19 +216,47 @@ Hogar_tipo_1b <- c(
   48462.54, 50121.54, 51305.74, 52932.46, 53798.9, 54421.74, 56152.06
 )
 datos_canasta <- data.table(foto_mes = foto_mes, Hogar_tipo_1b = Hogar_tipo_1b)
-dataset <- merge(dataset, datos_canasta, by = "foto_mes", all.x = TRUE)
+
+setkey(dataset, foto_mes)
+setkey(datos_canasta, foto_mes)
+dataset[datos_canasta, `:=`(Hogar_tipo_1b = i.Hogar_tipo_1b)]  #FUNCIONA
 
 
 sum_mrentabilidad <- dataset[, .(suma_mrentabilidad = sum(mrentabilidad, na.rm = TRUE)), by = foto_mes]
-dataset <- merge(dataset, sum_mrentabilidad, by = "foto_mes", all.x = TRUE)
-dataset[, custumer_contribution := mrentabilidad / suma_mrentabilidad * 1e5] #37
-
+setkey(dataset, foto_mes)
+setkey(sum_mrentabilidad, foto_mes)
+dataset[sum_mrentabilidad, `:=`(sum_mrentabilidad = i.suma_mrentabilidad)]
+dataset[, custumer_contribution := mrentabilidad / sum_mrentabilidad * 1e5] #37
 
 dataset[, investment_over_debt := mtotal_investment / mtotal_debt] #38
 
+
 total_income_mes <- dataset[, .(total_income_m = sum(mtotal_income, na.rm = TRUE)), by = foto_mes]
-dataset <- merge(dataset, total_income_mes, by = "foto_mes", all.x = TRUE)
-dataset[, Income_rate := mtotal_income / total_income_m *1e6] #39
+setkey(dataset, foto_mes)
+setkey(total_income_mes, foto_mes)
+dataset[total_income_mes, `:=`(total_income_mes = i.total_income_m)]
+dataset[, Income_rate := mtotal_income / total_income_mes *1e6] #39
+
+#FUNCIÓN DE PERCENTILES FIJOS
+calculate_percentiles <- function(x) {
+  quantiles <- quantile(x, probs = c(0.45, 0.65, 0.85), na.rm = TRUE)
+  cut_points <- c(-Inf, quantiles[1], quantiles[2], quantiles[3], Inf)
+  labels <- c("P0-P45", "P45-P65", "P65-P85", ">P85")
+  cut(x, breaks = cut_points, labels = labels, include.lowest = TRUE)
+}
+
+dataset[, Income_rate_ := calculate_percentiles(Income_rate), by = foto_mes]
+Income_rate_p <- dcast(dataset[, list(V1=1, numero_de_cliente, foto_mes , Income_rate_), ],
+                       numero_de_cliente+foto_mes  ~ paste("Income_rate_",Income_rate_, sep=""),
+                       fun=sum,
+                       value.var="V1",
+                       drop=c(TRUE, FALSE))
+
+dataset <- dataset[Income_rate_p, on=c("numero_de_cliente", "foto_mes")] #forma alternativa de merge
+
+
+
+
 
 
   # valvula de seguridad para evitar valores infinitos

@@ -254,6 +254,7 @@ Income_rate_p <- dcast(dataset[, list(V1=1, numero_de_cliente, foto_mes , Income
 Income_rate_p <- as.data.table(Income_rate_p)                       
 
 merged_dataset <- merge(dataset, Income_rate_p, by = c("foto_mes", "numero_de_cliente"), all.x = TRUE)
+merged_dataset[, Income_rate_:=NULL]
 dataset<<-merged_dataset
 rm(merged_dataset)
 
@@ -274,7 +275,7 @@ rm(merged_dataset)
       "ATENCION, hay", infinitos_qty,
       "valores infinitos en tu dataset. Seran pasados a NA\n"
     )
-    dataset[mapply(is.infinite, dataset)] <<- NA
+    dataset[mapply(is.infinite, dataset)] <- NA
   }
 
 
@@ -294,7 +295,7 @@ rm(merged_dataset)
     )
 
     cat("Si no te gusta la decision, modifica a gusto el programa!\n\n")
-    dataset[mapply(is.nan, dataset)] <<- 0
+    dataset[mapply(is.nan, dataset)] <- 0
   }
 }
 #------------------------------------------------------------------------------

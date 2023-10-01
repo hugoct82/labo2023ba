@@ -39,33 +39,40 @@ PARAM$lgb_semilla <- 420551 # cambiar por su propia semilla
 
 # Hiperparametros FIJOS de  lightgbm
 PARAM$lgb_basicos <- list(
-  boosting = "gbdt", # puede ir  dart  , ni pruebe random_forest
+  boosting = "gbdt", # puede ir  dart  , ni pruebe random_forest, gbdt:traditional Gradient Boosting Decision Tree
   objective = "binary",
-  metric = "custom",
-  first_metric_only = TRUE,
-  boost_from_average = TRUE,
-  feature_pre_filter = FALSE,
+  metric = "custom", #admite AUC
+  first_metric_only = TRUE, #only the first metric for early stopping
+  boost_from_average = TRUE, #used only in regression, binary..adjusts initial score to the mean of labels for faster convergence
+  feature_pre_filter = FALSE, #controla si se deben ignorar las características que no se pueden splitear
   force_row_wise = TRUE, # para reducir warnings
   verbosity = -100,
   max_depth = -1L, # -1 significa no limitar,  por ahora lo dejo fijo
-  min_gain_to_split = 0.0, # min_gain_to_split >= 0.0
-  min_sum_hessian_in_leaf = 0.001, #  min_sum_hessian_in_leaf >= 0.0
-  lambda_l1 = 0.0, # lambda_l1 >= 0.0
-  lambda_l2 = 0.0, # lambda_l2 >= 0.0
-  max_bin = 31L, # lo debo dejar fijo, no participa de la BO
+  min_gain_to_split = 0.0, # min_gain_to_split >= 0.0, can be used to speed up training
+  min_sum_hessian_in_leaf = 0.001, #  min_sum_hessian_in_leaf >= 0.0??
+  lambda_l1 = 0.0, # lambda_l1 >= 0.0 parametro para convergencia a la media
+  lambda_l2 = 0.0, # lambda_l2 >= 0.0 trabaja en conjunto con L2
+  max_bin = 31L, # lo debo dejar fijo, no participa de la BO - 3 de contenedores para agrupación de valores
   num_iterations = 9999, # un numero muy grande, lo limita early_stopping_rounds
 
   bagging_fraction = 1.0, # 0.0 < bagging_fraction <= 1.0
   pos_bagging_fraction = 1.0, # 0.0 < pos_bagging_fraction <= 1.0
   neg_bagging_fraction = 1.0, # 0.0 < neg_bagging_fraction <= 1.0
-  is_unbalance = FALSE, #
+  is_unbalance = FALSE, # Este abrá que cambiarlo, no se puede usar junto con scale_pos_weight
   scale_pos_weight = 1.0, # scale_pos_weight > 0.0
 
+  #is_unbalance: set this to true if training data are unbalanced
+  #Note: while enabling this should increase the overall performance metric of your model,
+  # it will also result in poor estimates of the individual class probabilities
+  
+  #if both pos_bagging_fraction and neg_bagging_fraction are set to 1.0, balanced bagging is disabled
+
   drop_rate = 0.1, # 0.0 < neg_bagging_fraction <= 1.0
-  max_drop = 50, # <=0 means no limit
+  max_drop = 50, # <=0 means no limit  - used only in dart
   skip_drop = 0.5, # 0.0 <= skip_drop <= 1.0
 
-  extra_trees = TRUE, # Magic Sauce
+  extra_trees = TRUE, # Magic Sauce - utilizar árboles extremadamente aleatorios?
+  #al evaluar las divisiones de nodos LightGBM comprobará sólo un umbral elegido aleatoriamente para cada característica?
 
   seed = PARAM$lgb_semilla
 )
@@ -299,7 +306,7 @@ fganancia_lgbm_mesetaCV <- function(probs, datos) {
 
   vcant_optima <<- c(vcant_optima, pos)
 
-  if (GLOBAL_arbol %% (10 * PARAM$lgb_crossvalidation_folds) == 0) {
+  if (GLOBAL_arbol %% (10 * PARAM$lgb_crossvalidation_folds) == 0) { # Cantidad minima de entrenamientos
     if (gan > GLOBAL_gan_max) GLOBAL_gan_max <<- gan
 
     cat("\r")

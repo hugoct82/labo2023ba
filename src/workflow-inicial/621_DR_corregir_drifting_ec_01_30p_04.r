@@ -286,15 +286,14 @@ AgregarVariables_IntraMes <- function(dataset) {
                       202107, 202112, 202207, 202212, 202307)
   dataset[, bonus_aguinaldo_detec := ifelse((foto_mes %in% fechas_aguinal), 0, 1)] #42
 
-  dataset[, ratio_comi_incom := mcomisiones / mtotal_income] #51
-
-  dataset[, ratio_deuda_capital  := mtotal_debt / ( mtotal_investment + mtotal_income)] #43
+  dataset[, ratio_comi_incom := mcomisiones / mtotal_income] #43
 
   dataset[, ratio_deuda_capital  := mtotal_debt / ( mtotal_investment + mtotal_income)] #44
 
   dataset[, ratio_monto_atm_atm_other  := matm/(matm + matm_other)] #45
 
   dataset[, ratio_mov_atm_atm_other  := catm_trx/(catm_trx+catm_trx_other)] #46
+
 
 
   # valvula de seguridad para evitar valores infinitos
@@ -310,7 +309,7 @@ AgregarVariables_IntraMes <- function(dataset) {
       "ATENCION, hay", infinitos_qty,
       "valores infinitos en tu dataset. Seran pasados a NA\n"
     )
-    dataset[mapply(is.infinite, dataset)] <- NA # Se cambia asignación global a local
+    dataset[mapply(is.infinite, dataset)] <<- NA # Se cambia asignación global a local
   }
 
 
@@ -330,7 +329,7 @@ AgregarVariables_IntraMes <- function(dataset) {
     )
 
     cat("Si no te gusta la decision, modifica a gusto el programa!\n\n")
-    dataset[mapply(is.nan, dataset)] <- 0 # Se cambia asignación global a local
+    dataset[mapply(is.nan, dataset)] <<- 0 # Se cambia asignación global a local
   }
 }
 #------------------------------------------------------------------------------

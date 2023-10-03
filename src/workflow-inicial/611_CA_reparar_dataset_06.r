@@ -4,18 +4,20 @@
 # limpio la memoria
 rm(list = ls(all.names = TRUE)) # remove all objects
 gc(full = TRUE) # garbage collection
-install.packages("mice")
+
 require("data.table")
 require("yaml")
-require("mice")
+#Lectura de configuraciones, Almacenamiento de datos estructurados
+#Relacionado con la generacion de reportes tipo latex
+
 # Parametros del script
 PARAM <- list()
-PARAM$experimento <- "CA6110_ayuda_01"
+PARAM$experimento <- "CA6110_EC_06"
 PARAM$dataset <- "./datasets/competencia_2023.csv.gz"
 
 # valores posibles
-#  "MachineLearning"  "EstadisticaClasica" "Regresion_lineal" "Ninguno"
-PARAM$metodo <- "Regresion_lineal" #"MachineLearning"
+#  "MachineLearning"  "EstadisticaClasica" "Ninguno"
+PARAM$metodo <- "MachineLearning"  ###Se imputa_machine_learning
 PARAM$home <- "~/buckets/b1/"
 
 # FIN Parametros del script
@@ -25,7 +27,7 @@ OUTPUT <- list()
 #------------------------------------------------------------------------------
 
 options(error = function() {
-  traceback(20)
+  traceback(20) #imprimirá las últimas 20 llamadas en la pila de llamadas
   options(error = NULL)
   stop("exiting after script error")
 })
@@ -37,6 +39,10 @@ GrabarOutput <- function() {
 #------------------------------------------------------------------------------
 
 CorregirCampoMes <- function(pcampo, pmeses) {
+#tabla de dos columnas llamadas "v1" y "v2". "v1" contiene los valores del campo pcampo
+# desplazados una fila hacia arriba (lag), y "v2" contiene los valores desplazados una fila hacia abajo (lead).
+# Los cálculos se realizan por grupo, donde el grupo se define por la columna numero_de_cliente
+
   tbl <- dataset[, list(
     "v1" = shift(get(pcampo), 1, type = "lag"),
     "v2" = shift(get(pcampo), 1, type = "lead")
@@ -44,8 +50,8 @@ CorregirCampoMes <- function(pcampo, pmeses) {
   by = numero_de_cliente
   ]
 
-  tbl[, numero_de_cliente := NULL]
-  tbl[, promedio := rowMeans(tbl, na.rm = TRUE)]
+  tbl[, numero_de_cliente := NULL]#elimino la columna numero_de_cliente
+  tbl[, promedio := rowMeans(tbl, na.rm = TRUE)] #calculo del promedio de las filas de tbl
 
   dataset[
     ,
@@ -55,6 +61,13 @@ CorregirCampoMes <- function(pcampo, pmeses) {
     )
   ]
 }
+#Si el valor de "foto_mes" está en pmeses, el valor en la columna pcampo permanece igual que antes.
+# Si no está en pmeses, se reemplaza por el valor promedio correspondiente de la columna "promedio" del objeto tbl.
+# Esta operación permite corregir los valores en la columna pcampo basándose en una lógica condicional
+# y en los valores promedio calculados previamente en tbl
+
+
+
 #------------------------------------------------------------------------------
 # reemplaza cada variable ROTA  (variable, foto_mes)
 #  con el promedio entre  ( mes_anterior, mes_posterior )
@@ -207,82 +220,6 @@ Corregir_MachineLearning <- function(dataset) {
   dataset[foto_mes == 202006, cmobile_app_trx := NA]
 }
 #------------------------------------------------------------------------------
-
-
-Corregir_Regresionlineal <- function(dataset) {
-    # Seleccionar las columnas "thomebanking" y "foto_mes" usando data.table
-    
-
-# Seleccionar las filas donde "foto_mes" coincide con las fechas específicas
-    selected_data <- dataset[foto_mes %in% c(202005), .(thomebanking, foto_mes)]
-
-
-
-# Imputar valores faltantes usando "mice"
-    mice_output <- mice(selected_data, m = 1, maxit = 1, method = "norm.nob", seed = 700561)
-
-# Asignar los valores imputados nuevamente al conjunto de datos original
-    dataset[, thomebanking := mice_output$thomebanking]
-    
-       
-
-  #CorregirCampoMes(mice(df%>%select(thomebanking,202005), m = 1, maxit = 1, method = "norm.nob", seed = 700561))
-  #CorregirCampoMes("chomebanking_transacciones", c(201801, 201910, 202006))
-  #CorregirCampoMes("tcallcenter", c(201801, 201806, 202006))
-  #CorregirCampoMes("ccallcenter_transacciones", c(201801, 201806, 202006))
-  #CorregirCampoMes("cprestamos_personales", c(201801, 202006))
-  #CorregirCampoMes("mprestamos_personales", c(201801, 202006))
-  #CorregirCampoMes("mprestamos_hipotecarios", c(201801, 202006))
-  #CorregirCampoMes("ccajas_transacciones", c(201801, 202006))
-  #CorregirCampoMes("ccajas_consultas", c(201801, 202006))
-  #CorregirCampoMes("ccajas_depositos", c(201801, 202006))
-  #CorregirCampoMes("ccajas_extracciones", c(201801, 202006))
-  #CorregirCampoMes("ccajas_otras", c(201801, 202006))
-  
-  #CorregirCampoMes("ctarjeta_visa_debitos_automaticos", c(201904))
-  #CorregirCampoMes("mttarjeta_visa_debitos_automaticos", c(201904, 201905))
-  #CorregirCampoMes("Visa_mfinanciacion_limite", c(201904))
-  
-  #CorregirCampoMes("mrentabilidad", c(201905, 201910, 202006))
-  #CorregirCampoMes("mrentabilidad_annual", c(201905, 201910, 202006))
-  #CorregirCampoMes("mcomisiones", c(201905, 201910, 202006))
-  #CorregirCampoMes("mpasivos_margen", c(201905, 201910, 202006))
-  #CorregirCampoMes("mactivos_margen", c(201905, 201910, 202006))
-  #CorregirCampoMes("ccomisiones_otras", c(201905, 201910, 202006))
-  #CorregirCampoMes("mcomisiones_otras", c(201905, 201910, 202006))
-  #
-  #CorregirCampoMes("ctarjeta_visa_descuentos", c(201910))
-  #CorregirCampoMes("ctarjeta_master_descuentos", c(201910))
-  #CorregirCampoMes("mtarjeta_visa_descuentos", c(201910))
-  #CorregirCampoMes("mtarjeta_master_descuentos", c(201910))
-  #CorregirCampoMes("ccajeros_propios_descuentos", c(201910))
-  #CorregirCampoMes("mcajeros_propios_descuentos", c(201910))
-  #
-  #CorregirCampoMes("cliente_vip", c(201911))
-  #
-  #CorregirCampoMes("active_quarter", c(202006))
-  #CorregirCampoMes("mcuentas_saldo", c(202006))
-  #CorregirCampoMes("ctarjeta_debito_transacciones", c(202006))
-  #CorregirCampoMes("mautoservicio", c(202006))
-  #CorregirCampoMes("ctarjeta_visa_transacciones", c(202006))
-  #CorregirCampoMes("ctarjeta_visa_transacciones", c(202006))
-  #CorregirCampoMes("cextraccion_autoservicio", c(202006))
-  #CorregirCampoMes("mextraccion_autoservicio", c(202006))
-  #CorregirCampoMes("ccheques_depositados", c(202006))
-  #CorregirCampoMes("mcheques_depositados", c(202006))
-  #CorregirCampoMes("mcheques_emitidos", c(202006))
-  #CorregirCampoMes("mcheques_emitidos", c(202006))
-  #CorregirCampoMes("ccheques_depositados_rechazados", c(202006))
-  #CorregirCampoMes("mcheques_depositados_rechazados", c(202006))
-  #CorregirCampoMes("ccheques_emitidos_rechazados", c(202006))
-  #CorregirCampoMes("mcheques_emitidos_rechazados", c(202006))
-  #CorregirCampoMes("catm_trx", c(202006))
-  #CorregirCampoMes("matm", c(202006))
-  #CorregirCampoMes("catm_trx_other", c(202006))
-  #CorregirCampoMes("matm_other", c(202006))
-  #CorregirCampoMes("cmobile_app_trx", c(202006))"""
-}
-
 #------------------------------------------------------------------------------
 # Aqui empieza el programa
 OUTPUT$PARAM <- PARAM
@@ -311,7 +248,6 @@ setorder(dataset, numero_de_cliente, foto_mes)
 switch(PARAM$metodo,
   "MachineLearning"     = Corregir_MachineLearning(dataset),
   "EstadisticaClasica"  = Corregir_EstadisticaClasica(dataset),
-  "Regresion_lineal"    = Corregir_Regresionlineal(dataset),
   "Ninguno"             = cat("No se aplica ninguna correccion.\n"),
 )
 
@@ -330,7 +266,7 @@ fwrite(dataset,
 tb_campos <- as.data.table(list(
   "pos" = 1:ncol(dataset),
   "campo" = names(sapply(dataset, class)),
-  "tipo" = sapply(dataset, class),
+  "tipo" = sapply(dataset, class), #sapply no aplicable a Estructuras de datos no homogéneas:
   "nulos" = sapply(dataset, function(x) {
     sum(is.na(x))
   }),

@@ -47,7 +47,7 @@ PARAM$modelos_rank <- c(1) #Se le ingresa como 1 logico?
 #Cuando se hagan pruebas finales se podrá usar mas o menos semillas.
 # reemplazar por las propias semillas
 PARAM$semillas <- c(100019, 100043, 100049, 100057, 100069, 106791 , 157991, 203663, 300177,
- 420551, 589753, 632363, 770437, 810401, 989581)
+ 420551, 589753, 632363)#, 770437)#, 810401)#, 989581)
 
 PARAM$kaggle$envios_desde <- 9500L
 PARAM$kaggle$envios_hasta <- 11500L

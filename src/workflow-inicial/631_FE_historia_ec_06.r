@@ -23,7 +23,7 @@ PARAM$experimento <- "FE6310_EC_06"
 
 PARAM$exp_input <- "DR6210_EC_06"
 
-PARAM$lag1 <- TRUE
+PARAM$lag1 <- FALSE
 PARAM$lag2 <- TRUE
 PARAM$lag3 <- TRUE
 
@@ -55,7 +55,7 @@ PARAM$RandomForest$semilla <- 420551 # cambiar por la propia semilla
 
 
 # varia de 0.0 a 2.0, si es 0.0 NO se activan
-PARAM$CanaritosAsesinos$ratio <- 1.26
+PARAM$CanaritosAsesinos$ratio <- 0.52
 # desvios estandar de la media, para el cutoff
 PARAM$CanaritosAsesinos$desvios <- 1.647
 # cambiar por la propia semilla

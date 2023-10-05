@@ -37,7 +37,7 @@ PARAM$Tendencias1$ratioavg <- FALSE
 PARAM$Tendencias1$ratiomax <- FALSE
 
 PARAM$Tendencias2$run <- TRUE
-PARAM$Tendencias2$ventana <- 12
+PARAM$Tendencias2$ventana <- 9
 PARAM$Tendencias2$tendencia <- TRUE
 PARAM$Tendencias2$minimo <- FALSE
 PARAM$Tendencias2$maximo <- FALSE

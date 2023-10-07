@@ -52,7 +52,7 @@ PARAM$lgb_basicos <- list(
   min_sum_hessian_in_leaf = 0.001, #  min_sum_hessian_in_leaf >= 0.0??
   lambda_l1 = 0.0, # lambda_l1 >= 0.0 parametro para convergencia a la media
   lambda_l2 = 0.0, # lambda_l2 >= 0.0 trabaja en conjunto con L2
-  #max_bin = 41L, # lo debo dejar fijo, no participa de la BO - 3 de contenedores para agrupación de valores
+  max_bin = 100L, # lo debo dejar fijo, no participa de la BO - 3 de contenedores para agrupación de valores
   num_iterations = 9999, # un numero muy grande, lo limita early_stopping_rounds
 
   bagging_fraction = 1.0, # 0.0 < bagging_fraction <= 1.0
@@ -84,7 +84,6 @@ PARAM$bo_lgb <- makeParamSet(
   makeNumericParam("learning_rate", lower = 0.02, upper = 0.3),
   makeNumericParam("feature_fraction", lower = 0.01, upper = 1.0),
   makeIntegerParam("num_leaves", lower = 8L, upper = 1024L),
-  makeIntegerParam("max_bin", lower = 25L, upper = 50L),# Nuevo parametro para ver como funciona
   makeIntegerParam("min_data_in_leaf", lower = 100L, upper = 50000L)
 )
 

@@ -27,7 +27,7 @@ options(error = function() {
 
 # Parametros del script
 PARAM <- list()
-PARAM$experimento <- "HT6510_EC_07"
+PARAM$experimento <- "HT6510_EC_07_01"
 
 PARAM$exp_input <- "TS6410_EC_07"
 
@@ -90,7 +90,7 @@ PARAM$bo_lgb <- makeParamSet(
 
 
 # si usted es ambicioso, y tiene paciencia, podria subir este valor a 100
-PARAM$bo_iteraciones <- 75 # iteraciones de la Optimizacion Bayesiana
+PARAM$bo_iteraciones <- 50 # iteraciones de la Optimizacion Bayesiana
 
 PARAM$home <- "~/buckets/b1/"
 
